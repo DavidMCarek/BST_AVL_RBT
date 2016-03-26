@@ -1,19 +1,15 @@
 #pragma once
 #include <string>
 
-class BinaryTree
+class BST
 {
 public:
-	BinaryTree();
-	~BinaryTree();
+	BST();
+	~BST();
 	void insert(std::string input);
-	void list();
-	void min();
-	void max();
 	void search(std::string input);
-	void next(std::string input);
-	void previous(std::string input);
-	void deleteInput(std::string input);
+	int getHeight();
+	void calculateHeight();
 private:
 	struct Node {
 		Node* parent = nullptr;
@@ -22,15 +18,12 @@ private:
 		std::string value;
 		int count = 1;
 	};
+	int treeHeight = 0;
 	void printNodeInfo(Node* node);
 	Node* Root;
 	enum ChildDirection {Left, Right, Unknown};
-	void traverse(Node* node);
+	void traverse(Node* node, int nodeHeight);
 	Node* nodeLookup(std::string input);
-	Node* getLeftmostNode(Node* node);
-	Node* getRightmostNode(Node* node);
-	void removeNode(Node* node);
-	void transplant(Node* node, Node* child);
 	void deleteRemainingNodes(Node* node);
 };
 
