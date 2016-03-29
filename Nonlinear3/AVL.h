@@ -23,7 +23,6 @@ private:
 	void traverseForHeight(Node* node, int nodeHeight);
 	Node * Root;
 	Node * nodeLookup(std::string input);
-	bool updateBalanceFactors = false;
 	void traverseAndPrint(Node * node);
 	void printNodeInfo(Node * node);
 };
