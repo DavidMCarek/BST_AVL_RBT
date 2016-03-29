@@ -32,6 +32,7 @@ void Control::baseLineFileRead(char delimeters[11], std::string filePath)
 
 	std::string nextWord = "";
 
+	bool isDelimeter = false;
 	char nextChar;
 	inputStream.get(nextChar);
 
@@ -39,13 +40,18 @@ void Control::baseLineFileRead(char delimeters[11], std::string filePath)
 	{
 		for each (char delimeter in delimeters)
 		{
-			if (nextChar != delimeter)
-				nextWord.append(nextChar + "");
-			
-			else
+			if (nextChar == delimeter)
+			{
 				nextWord = "";
-			
+				isDelimeter = true;
+			}
 		}
+
+		if (!isDelimeter)
+			nextWord.push_back((unsigned char)nextChar);
+
+		isDelimeter = false;
+
 		inputStream.get(nextChar);
 	}
 

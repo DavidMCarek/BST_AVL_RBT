@@ -64,7 +64,6 @@ void BST::insert(std::string input)
 		else
 		{
 			currentNode->count = currentNode->count++;
-			printNodeInfo(currentNode);
 			return;
 		}
 	}
@@ -72,7 +71,6 @@ void BST::insert(std::string input)
 	// since we are at a null leaf we need to create a new node and set its value to the input
 	currentNode = new Node();
 	currentNode->value = input;
-	printNodeInfo(currentNode);
 
 	// if the previous node is null then it must be the root so we need to set the root node
 	// to the current node
@@ -103,17 +101,17 @@ void BST::calculateHeight()
 		return;
 	
 	// if the set is not empty traverse the list in order and output the node values and counts
-	traverse(Root, treeHeight);
+	traverseForHeight(Root, treeHeight);
 }
 
 // recurse through the tree printing the nodes in order
-void BST::traverse(Node* node, int nodeHeight)
+void BST::traverseForHeight(Node* node, int nodeHeight)
 {
 	if (node->leftChild != nullptr)
-		traverse(node->leftChild, nodeHeight + 1);
+		traverseForHeight(node->leftChild, nodeHeight + 1);
 
 	if (node->rightChild != nullptr)
-		traverse(node->rightChild, nodeHeight + 1);
+		traverseForHeight(node->rightChild, nodeHeight + 1);
 
 	if (nodeHeight > treeHeight)
 		treeHeight = nodeHeight;
@@ -178,4 +176,30 @@ BST::Node* BST::nodeLookup(std::string input)
 int BST::getHeight()
 {
 	return treeHeight;
+}
+
+void BST::list()
+{
+	// if the root is null then the set is empty and we need to output a blank line and return
+	if (Root == nullptr)
+	{
+		std::cout << std::endl;
+		return;
+	}
+	// if the set is not empty traverse the list in order and output the node values and counts
+	traverseAndPrint(Root);
+}
+
+// recurse through the tree printing the nodes in order
+void BST::traverseAndPrint(Node* node)
+{
+	// if the nodes left child is not null keep going left and then print going back up until you can 
+	// go right. then keep trying to go left again and repeat
+	if (node->leftChild != nullptr)
+		traverseAndPrint(node->leftChild);
+
+	printNodeInfo(node);
+
+	if (node->rightChild != nullptr)
+		traverseAndPrint(node->rightChild);
 }

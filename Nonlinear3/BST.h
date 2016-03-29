@@ -8,6 +8,7 @@ public:
 	~BST();
 	void insert(std::string input);
 	void search(std::string input);
+	void list();
 	int getHeight();
 	void calculateHeight();
 private:
@@ -22,7 +23,8 @@ private:
 	void printNodeInfo(Node* node);
 	Node* Root;
 	enum ChildDirection {Left, Right, Unknown};
-	void traverse(Node* node, int nodeHeight);
+	void traverseForHeight(Node* node, int nodeHeight);
+	void traverseAndPrint(Node* node);
 	Node* nodeLookup(std::string input);
 	void deleteRemainingNodes(Node* node);
 };
