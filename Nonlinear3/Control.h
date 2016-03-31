@@ -1,3 +1,9 @@
+// EECS 2510 : BST VS AVL VS RBT
+// David Carek
+
+// this class executes a trial insert run without inserting to any trees allowing us to get a better
+// idea of the time it takes to insert into the trees
+
 #pragma once
 #include <string>
 #include <chrono>

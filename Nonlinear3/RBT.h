@@ -1,3 +1,7 @@
+// EECS 2510 : BST VS AVL VS RBT
+// David Carek
+
+// This class is used to build a red black tree which is a type height balancing tree
 #pragma once
 #include <string>
 #include <chrono>
@@ -7,9 +11,9 @@ class RBT
 public:
 	RBT();
 	~RBT();
-	void insert(std::string input); //inserts a node into the tree
-	void list(); // prints all elements of the tree in order with the counts
-	void printStats(); // displays statistics for the tree
+	void insert(std::string input);
+	void list(); 
+	void printStats(); 
 	void setInsertTime(std::chrono::duration<double> insertTime);
 private:
 	struct Node {

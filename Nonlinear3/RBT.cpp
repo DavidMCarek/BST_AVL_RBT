@@ -1,12 +1,17 @@
+// EECS 2510 : BST VS AVL VS RBT
+// David Carek
+
 #include "stdafx.h"
 #include "RBT.h"
 #include <string>
 #include <iostream>
 
+// when constructing a new tree we need to create our nil node that is the leaf
+// to all bottom nodes
 RBT::RBT()
 {
 	nil = new Node();
-	nil->color = false;
+	nil->color = false; // red = true black = false
 	nil->count = 0;
 	nil->leftChild = Root;
 	nil->rightChild = Root;
@@ -17,8 +22,13 @@ RBT::~RBT()
 {
 }
 
+// this function takes a word and adds it to the tree
+// once the node is in the tree we make sure that we have not broken any of the
+// rules of a red black tree
 void RBT::insert(std::string input)
 {
+	// if the the root is null then we have no nodes in the tree except for nil
+	// so we need to make a new node and set it as the root
 	if (Root == nullptr)
 	{
 		Root = new Node();
@@ -31,22 +41,28 @@ void RBT::insert(std::string input)
 		return;
 	}
 
-	Node * currentNode = Root;
-	Node * previousNode = nil;
+	Node * currentNode = Root; // this node will traverse down the tree to find the insertion point of the next node
+	Node * previousNode = nil; // this node lags behind the current node
+
+	// traverse down the tree until the current node reaches the leaf
 	while (currentNode != nil)
 	{
 		previousNode = currentNode;
 
+		// if the input is less than the current node value go left
 		if (input.compare(currentNode->value) < 0)
 		{
 			currentNode = currentNode->leftChild;
 			keyComparisons++;
 		}
+		// else if the input is greater than the current node go right
 		else if (input.compare(currentNode->value) > 0)
 		{
 			currentNode = currentNode->rightChild;
 			keyComparisons++;
 		}
+		// else the current node value equals that of the input so the only thing left to do is
+		// increment the count of that node and then return
 		else
 		{
 			currentNode->count++;
@@ -54,11 +70,14 @@ void RBT::insert(std::string input)
 		}
 	}
 
+	// if we have reached this point then the current node is nil and the previous node is the parent for the
+	// node we need to insert
 	Node * nodeToInsert = new Node();
 	nodeToInsert->value = input;
 	nodeToInsert->parent = previousNode;
 	nodePointerChanges++;
 
+	// if the previous node is nill 
 	if (previousNode == nil)
 		Root = nodeToInsert;
 	else

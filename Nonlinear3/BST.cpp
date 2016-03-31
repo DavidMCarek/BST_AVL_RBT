@@ -1,3 +1,6 @@
+// EECS 2510 : BST VS AVL VS RBT
+// David Carek
+
 #include "stdafx.h"
 #include "BST.h"
 #include <iostream>

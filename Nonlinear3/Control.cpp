@@ -1,3 +1,6 @@
+// EECS 2510 : BST VS AVL VS RBT
+// David Carek
+
 #include "stdafx.h"
 #include "Control.h"
 #include <string>
@@ -15,12 +18,15 @@ Control::~Control()
 {
 }
 
+// This function runs the same code as in main for the insert functions, however it does not
+// insert the words read into any tree. It is used for metrics only and the functionality has
+// already been described. If you need more information or are confused on how this works please
+// refer to the bstInsert() function in main.cpp that goes over the function in more detail
 void Control::baseLineFileRead(char delimeters[11], std::string filePath)
 {
 	std::ifstream inputStream;
 	inputStream.open(filePath, std::ios::binary);
 
-	// if we couldn't open the file, let the user know and return
 	if (inputStream.fail())
 	{
 		std::cout << "Could not open file" << std::endl;
@@ -59,6 +65,7 @@ void Control::baseLineFileRead(char delimeters[11], std::string filePath)
 	fileReadTime = end - start;
 }
 
+// returns the time taken for the mock insert to run
 std::chrono::duration<double> Control::getFileReadTime()
 {
 	return fileReadTime;
