@@ -16,9 +16,9 @@ using namespace std;
 
 int main()
 {
-	void insertBST(char delimeters[11], string inputFilePath, BST & tree);
-	void insertAVL(char delimeters[11], string inputFilePath, AVL & tree);
-	void insertRBT(char delimeters[11], string inputFilePath, RBT & tree);
+	void insertBST(char delimeters[11], string inputFilePath, BST & tree, Control control);
+	void insertAVL(char delimeters[11], string inputFilePath, AVL & tree, Control control);
+	void insertRBT(char delimeters[11], string inputFilePath, RBT & tree, Control control);
 
 	bool worstCaseTest = false;
 
@@ -49,43 +49,23 @@ int main()
 			BST_T.insert(to_string(i));
 		}
 
-		cout << "BST";
-		BST_T.setStats();
 		BST_T.printStats();
-		cout << endl;
-
-		cout << "AVL" << endl;
-		AVL_T.setStats();
 		AVL_T.printStats();
-		cout << endl;
-
-		cout << "RBT" << endl;
-		RBT_T.setStats();
 		RBT_T.printStats();
-		cout << endl;
 	}
 	else
 	{
 		BST bst;
-		insertBST(delimeters, inputFilePath, bst);
-		cout << "BST" << endl;
-		bst.setStats();
+		insertBST(delimeters, inputFilePath, bst, control);
 		bst.printStats();
-		cout << endl;
 
 		AVL avl;
-		insertAVL(delimeters, inputFilePath, avl);
-		cout << "AVL" << endl;
-		avl.setStats();
+		insertAVL(delimeters, inputFilePath, avl, control);
 		avl.printStats();
-		cout << endl;
 
 		RBT rbt;
-		insertRBT(delimeters, inputFilePath, rbt);
-		cout << "RBT" << endl;
-		rbt.setStats();
+		insertRBT(delimeters, inputFilePath, rbt, control);
 		rbt.printStats();
-		cout << endl;
 	}
 
 	// then we wait for the user to finish viewing the data
@@ -95,7 +75,7 @@ int main()
     return 0;
 }
 
-void insertRBT(char delimeters[11], string filePath, RBT & tree)
+void insertRBT(char delimeters[11], string filePath, RBT & tree, Control control)
 {
 	std::ifstream inputStream;
 	inputStream.open(filePath, std::ios::binary);
@@ -139,9 +119,10 @@ void insertRBT(char delimeters[11], string filePath, RBT & tree)
 	}
 
 	end = std::chrono::system_clock::now();
+	tree.setInsertTime(end - start - control.getFileReadTime());
 }
 
-void insertAVL(char delimeters[11], string filePath, AVL & tree)
+void insertAVL(char delimeters[11], string filePath, AVL & tree, Control control)
 {
 	std::ifstream inputStream;
 	inputStream.open(filePath, std::ios::binary);
@@ -185,9 +166,10 @@ void insertAVL(char delimeters[11], string filePath, AVL & tree)
 	}
 
 	end = std::chrono::system_clock::now();
+	tree.setInsertTime(end - start - control.getFileReadTime());
 }
 
-void insertBST(char delimeters[11], string filePath, BST & tree)
+void insertBST(char delimeters[11], string filePath, BST & tree, Control control)
 {
 	std::ifstream inputStream;
 	inputStream.open(filePath, std::ios::binary);
@@ -231,4 +213,5 @@ void insertBST(char delimeters[11], string filePath, BST & tree)
 	}
 
 	end = std::chrono::system_clock::now();
+	tree.setInsertTime(end - start - control.getFileReadTime());
 }

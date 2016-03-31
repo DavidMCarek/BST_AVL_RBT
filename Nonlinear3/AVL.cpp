@@ -36,6 +36,7 @@ void AVL::insert(std::string input)
 	{
 		if (input.compare(p->value) == 0)
 		{
+			keyComparisons++;
 			p->count++;
 			return;
 		}
@@ -65,6 +66,7 @@ void AVL::insert(std::string input)
 		q->leftChild = y;
 	else
 		q->rightChild = y;
+	keyComparisons++;
 
 	// if the value of the node we just inserted is less than that of the most recent nonzero balance factor node
 	// then we went left so the pivot needs to be the left child else its the right child
@@ -82,7 +84,7 @@ void AVL::insert(std::string input)
 		b = p;
 		displacement = 1;
 	}
-
+	keyComparisons++;
 
 	// then we traverse down from the most recent nonzero balance factor node to the node we inserted setting balance factors
 	// on the way down
@@ -98,6 +100,8 @@ void AVL::insert(std::string input)
 			p->balanceFactor = 1;
 			p = p->leftChild;
 		}
+		keyComparisons++;
+		balanceFactorChanges++;
 	}
 
 	// if the tree was completely balanced recentNonZero will be at the root of the tree and our insert will
@@ -105,6 +109,7 @@ void AVL::insert(std::string input)
 	if (0 == a->balanceFactor)
 	{
 		a->balanceFactor = displacement;
+		balanceFactorChanges++;
 		return;
 	}
 
@@ -112,6 +117,7 @@ void AVL::insert(std::string input)
 	if (a->balanceFactor == -displacement)
 	{
 		a->balanceFactor = 0;
+		balanceFactorChanges++;
 		return;
 	}
 
@@ -123,7 +129,9 @@ void AVL::insert(std::string input)
 		{
 			a->leftChild = b->rightChild;
 			b->rightChild = a;
+			nodePointerChanges += 2;
 			a->balanceFactor = b->balanceFactor = 0;
+			balanceFactorChanges += 2;
 		}
 		else //LR
 		{
@@ -132,15 +140,19 @@ void AVL::insert(std::string input)
 			b->rightChild = c->leftChild;
 			c->leftChild = b;
 			c->rightChild = a;
+			nodePointerChanges += 4;
 
 			a->balanceFactor = b->balanceFactor = 0;
+			balanceFactorChanges += 2;
 			
 			if (c->balanceFactor == 1)
 				a->balanceFactor = -1;
 			else if (c->balanceFactor == -1)
 				b->balanceFactor = 1;
+			balanceFactorChanges++;
 			
 			c->balanceFactor = 0;
+			balanceFactorChanges++;
 			b = c;
 		}
 	}
@@ -150,7 +162,10 @@ void AVL::insert(std::string input)
 		{
 			a->rightChild = b->leftChild;
 			b->leftChild = a;
+			nodePointerChanges += 2;
+
 			a->balanceFactor = b->balanceFactor = 0;
+			balanceFactorChanges += 2;
 		}
 		else //RL
 		{
@@ -159,15 +174,19 @@ void AVL::insert(std::string input)
 			b->leftChild = c->rightChild;
 			c->rightChild = b;
 			c->leftChild = a;
+			nodePointerChanges += 4;
 
 			a->balanceFactor = b->balanceFactor = 0;
+			balanceFactorChanges += 2;
 
 			if (c->balanceFactor == 1)
 				b->balanceFactor = -1;
 			else if (c->balanceFactor == -1)
 				a->balanceFactor = 1;
+			balanceFactorChanges++;
 
 			c->balanceFactor = 0;
+			balanceFactorChanges++;
 			b = c;
 		}
 	}
@@ -182,6 +201,7 @@ void AVL::insert(std::string input)
 		f->leftChild = b;
 	else
 		f->rightChild = b;
+	nodePointerChanges++;
 }
 
 void AVL::list()
@@ -215,56 +235,6 @@ void AVL::printNodeInfo(Node * node)
 	std::cout << node->value << " " << node->count << std::endl;
 }
 
-// prints the nodes value and count based on a users string
-void AVL::search(std::string input)
-{
-	// if the root is null then the set is empty and we need to print that the input was not found
-	if (Root == nullptr)
-	{
-		std::cout << input << " 0" << std::endl;
-		return;
-	}
-
-	Node* node = nodeLookup(input);
-	// if the node was not found print that it was not found else print that nodes value and count
-	if (node == nullptr)
-		std::cout << input << " 0" << std::endl;
-	else
-		printNodeInfo(node);
-}
-
-AVL::Node * AVL::nodeLookup(std::string input)
-{
-	Node * currentNode = Root;
-
-	// until a nullptr or the input string is found keep traversing down the the tree
-	// if a nullptr is found then the string is not in the tree
-	while (true)
-	{
-		// traverse left if input is < node value as long as lch not null
-		if (input.compare(currentNode->value) < 0)
-		{
-			if (currentNode->leftChild == nullptr)
-				return nullptr;
-			
-			currentNode = currentNode->leftChild;
-		}
-		// traverse right if input is > node value as long as rch not null
-		else if (input.compare(currentNode->value) > 0)
-		{
-			if (currentNode->rightChild == nullptr)
-				return nullptr;
-			
-			currentNode = currentNode->rightChild;
-		}
-		// else the input == node value so we return that node
-		else
-		{
-			return currentNode;
-		}
-	}
-}
-
 void AVL::setStats()
 {
 	treeHeight = 0;
@@ -295,10 +265,23 @@ void AVL::traverseSetStats(Node* node, int nodeHeight)
 		treeHeight = nodeHeight;
 }
 
+void AVL::setInsertTime(std::chrono::duration<double> insertTime)
+{
+	totalInsertTime = insertTime;
+}
 
 void AVL::printStats()
 {
-	std::cout << "Tree height : " << treeHeight << std::endl
+	setStats();
+	std::cout
+		<< "<----------AVL Statistics---------->" << std::endl
+		<< "Tree height : " << treeHeight << std::endl
 		<< "Total items : " << itemsInTree << std::endl
-		<< "Unique items : " << uniqueItemsInTree << std::endl;
+		<< "Unique items : " << uniqueItemsInTree << std::endl
+		<< "Key comparisons : " << keyComparisons << std::endl
+		<< "Node pointer changes : " << nodePointerChanges << std::endl
+		<< "Balance factor changes : " << balanceFactorChanges << std::endl;
+	printf("Insert time : %.3f s\n", totalInsertTime.count());
+	std::cout
+		<< "<---------------------------------->" << std::endl << std::endl;
 }
