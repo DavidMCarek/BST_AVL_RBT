@@ -265,30 +265,40 @@ AVL::Node * AVL::nodeLookup(std::string input)
 	}
 }
 
-void AVL::calculateHeight()
+void AVL::setStats()
 {
 	treeHeight = 0;
+	uniqueItemsInTree = 0;
+	itemsInTree = 0;
 	if (Root == nullptr)
 		return;
 
 	// if the set is not empty traverse the list in order and output the node values and counts
-	traverseForHeight(Root, treeHeight);
+	traverseSetStats(Root, treeHeight);
 }
 
-// recurse through the tree printing the nodes in order
-void AVL::traverseForHeight(Node* node, int nodeHeight)
+// recurse through the tree setting important statistics
+void AVL::traverseSetStats(Node* node, int nodeHeight)
 {
+	uniqueItemsInTree++;
+	itemsInTree += node->count;
 	if (node->leftChild != nullptr)
-		traverseForHeight(node->leftChild, nodeHeight + 1);
+		traverseSetStats(node->leftChild, nodeHeight + 1);
+
 
 	if (node->rightChild != nullptr)
-		traverseForHeight(node->rightChild, nodeHeight + 1);
+		traverseSetStats(node->rightChild, nodeHeight + 1);
+
+
 
 	if (nodeHeight > treeHeight)
 		treeHeight = nodeHeight;
 }
 
-int AVL::getHeight()
+
+void AVL::printStats()
 {
-	return treeHeight;
+	std::cout << "Tree height : " << treeHeight << std::endl
+		<< "Total items : " << itemsInTree << std::endl
+		<< "Unique items : " << uniqueItemsInTree << std::endl;
 }

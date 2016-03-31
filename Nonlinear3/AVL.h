@@ -9,8 +9,8 @@ public:
 	void insert(std::string input);
 	void list(); 
 	void search(std::string input);
-	int getHeight();
-	void calculateHeight();
+	void printStats();
+	void setStats();
 private:
 	struct Node {
 		Node * leftChild = nullptr;
@@ -20,7 +20,9 @@ private:
 		int balanceFactor = 0;
 	};
 	int treeHeight = 0;
-	void traverseForHeight(Node* node, int nodeHeight);
+	long itemsInTree = 0;
+	long uniqueItemsInTree = 0;
+	void traverseSetStats(Node* node, int nodeHeight);
 	Node * Root;
 	Node * nodeLookup(std::string input);
 	void traverseAndPrint(Node * node);
