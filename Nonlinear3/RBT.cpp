@@ -77,19 +77,14 @@ void RBT::insert(std::string input)
 	nodeToInsert->parent = previousNode;
 	nodePointerChanges++;
 
-	// if the previous node is nill 
-	if (previousNode == nil)
-		Root = nodeToInsert;
+	if (input.compare(previousNode->value) < 0)
+		previousNode->leftChild = nodeToInsert;
 	else
-	{
-		if (input.compare(previousNode->value) < 0)
-			previousNode->leftChild = nodeToInsert;
-		else
-			previousNode->rightChild = nodeToInsert;
+		previousNode->rightChild = nodeToInsert;
 
-		keyComparisons++;
-		nodePointerChanges++;
-	}
+	keyComparisons++;
+	nodePointerChanges++;
+	
 	nodeToInsert->leftChild = nil;
 	nodeToInsert->rightChild = nil;
 	nodePointerChanges += 2;
