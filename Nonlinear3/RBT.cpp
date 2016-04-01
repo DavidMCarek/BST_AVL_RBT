@@ -77,6 +77,8 @@ void RBT::insert(std::string input)
 	nodeToInsert->parent = previousNode;
 	nodePointerChanges++;
 
+	// now we figure out which child the node to insert is supposed to be by comparing the input value to that of the
+	// previous nodes value
 	if (input.compare(previousNode->value) < 0)
 		previousNode->leftChild = nodeToInsert;
 	else
@@ -85,20 +87,30 @@ void RBT::insert(std::string input)
 	keyComparisons++;
 	nodePointerChanges++;
 	
+	// then we make sure the new node we inserted has both its children point to the leaf of the tree
 	nodeToInsert->leftChild = nil;
 	nodeToInsert->rightChild = nil;
 	nodePointerChanges += 2;
 
+	// now that the insert is complete we need to make sure we have not violated any of the RB tree's properties
 	fixup(nodeToInsert);
 }
 
+// checks that we did not violate properites of the RB tree
+// if we have this will fix the tree 
 void RBT::fixup(Node * node)
 {
+	// while the nodes parent is red
 	while (node->parent->color)
 	{
+		// if the current nodes parent is equal to the current nodes grandparents left child then
+		// the current nodes uncle is the current nodes grandparents right child
 		if (node->parent == node->parent->parent->leftChild)
 		{
 			Node * uncle = node->parent->parent->rightChild;
+
+			// if the uncle is red we have violated the no two reds in a row rule and fix it by recoloring
+			// the parent, uncle, and grandparent
 			if (uncle->color)
 			{
 				node->parent->color = false;
@@ -106,15 +118,21 @@ void RBT::fixup(Node * node)
 				node->parent->parent->color = true;
 				recolorings += 3;
 
+				// now that we have solved the issue at this level we move up to the next location with a
+				// potential issue
 				node = node->parent->parent;
 			}
 			else
 			{
+				// if the current node is the right child of its parent then the current nodes sibling is black
+				// this is solved by performing a left rotate on the current nodes parent
 				if (node == node->parent->rightChild)
 				{
 					node = node->parent;
 					leftRotate(node);
 				}
+				// now that the current node is a left child we can recolor the current nodes parents and perform a 
+				// right rotation on the current nodes grandparent to finish fixing 
 				node->parent->color = false;
 				node->parent->parent->color = true;
 				recolorings += 2;
@@ -124,6 +142,8 @@ void RBT::fixup(Node * node)
 		}
 		else
 		{
+			// this next section is symmetric to the section above
+			// for clarification please refer to the previous section
 			Node * uncle = node->parent->parent->leftChild;
 			if (uncle->color)
 			{
@@ -148,13 +168,19 @@ void RBT::fixup(Node * node)
 			}
 		}
 	}
+
+	// now the only thing left to do is set the root to black just in case it was changed earlier
 	Root->color = false;
 	recolorings++;
 }
 
+// this function performs a left rotate on the node passed in
 void RBT::leftRotate(Node * node)
 {
+	// the temp node is node’s right (non-nil) child
 	Node * tempNode = node->rightChild;
+	
+	//Turn temp node’s left subtree into node’s right subtree
 	node->rightChild = tempNode->leftChild;
 	nodePointerChanges++;
 
@@ -163,12 +189,14 @@ void RBT::leftRotate(Node * node)
 		tempNode->leftChild->parent = node;
 		nodePointerChanges++;
 	}
-	
+	// Link node’s parent to temp node
 	tempNode->parent = node->parent;
 	nodePointerChanges++;
 
+	// If node has no parent, node was the root so temp node becomes the new root
 	if (node->parent == nil)
 		Root = tempNode;
+	// Otherwise (node has a parent), the spot node used to occupy now gets taken by temp node
 	else
 	{
 		if (node == node->parent->leftChild)
@@ -179,12 +207,15 @@ void RBT::leftRotate(Node * node)
 		nodePointerChanges++;
 	}
 	
+	// put node on temp node’s left, which makes node’s parent be temp node
 	tempNode->leftChild = node;
 	node->parent = tempNode;
 
 	nodePointerChanges += 2;
 }
 
+// this function is symmetric to the one above
+// if clarification is needed please refer to it
 void RBT::rightRotate(Node * node)
 {
 	Node * tempNode = node->leftChild;
@@ -224,6 +255,7 @@ void RBT::printNodeInfo(Node* node)
 	std::cout << node->value << " " << node->count << std::endl;
 }
 
+// clears previous stats and re-calculates them by recursively traversing
 void RBT::setStats()
 {
 	treeHeight = 0;
@@ -237,20 +269,28 @@ void RBT::setStats()
 }
 
 // recurse through the tree setting important statistics
-void RBT::traverseSetStats(Node* node, int nodeHeight)
+void RBT::traverseSetStats(Node* node, int nodeDepth)
 {
+	// when this function is called we are at a node and a node is a unique item and its count should
+	// be added to the running sum of the items in the tree
 	uniqueItemsInTree++;
 	itemsInTree += node->count;
+
+	// if you can go left, then go left
 	if (node->leftChild != nil)
-		traverseSetStats(node->leftChild, nodeHeight + 1);
+		traverseSetStats(node->leftChild, nodeDepth + 1);
 
+	// if you can go right, go right
 	if (node->rightChild != nil)
-		traverseSetStats(node->rightChild, nodeHeight + 1);
+		traverseSetStats(node->rightChild, nodeDepth + 1);
 
-	if (nodeHeight > treeHeight)
-		treeHeight = nodeHeight;
+	// now we are at a leaf so we so if our current depth is greater than the tree height we replace the 
+	// current height with the depth. this is because the greatest depth is equal to the height of the tree
+	if (nodeDepth > treeHeight)
+		treeHeight = nodeDepth;
 }
 
+// prints all nodes in order
 void RBT::list()
 {
 	// if the root is null then the set is empty and we need to output a blank line and return
@@ -277,11 +317,13 @@ void RBT::traverseAndPrint(Node* node)
 		traverseAndPrint(node->rightChild);
 }
 
+// sets the time it takes for the insert process
 void RBT::setInsertTime(std::chrono::duration<double> insertTime)
 {
 	totalInsertTime = insertTime;
 }
 
+// sets the statistics and then prints out the needed metrics
 void RBT::printStats()
 {
 	setStats();

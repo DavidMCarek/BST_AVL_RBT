@@ -2,6 +2,7 @@
 // David Carek
 
 // This class is used to build a red black tree which is a type height balancing tree
+// this tree uses coloring of nodes to keep the height under 2lg(n)
 #pragma once
 #include <string>
 #include <chrono>
@@ -35,7 +36,7 @@ private:
 	void fixup(Node * node);
 	void leftRotate(Node * node);
 	void rightRotate(Node * node);
-	void traverseSetStats(Node* node, int nodeHeight);
+	void traverseSetStats(Node* node, int nodeDepth);
 	Node * Root;
 	Node * nil;
 	void traverseAndPrint(Node * node);

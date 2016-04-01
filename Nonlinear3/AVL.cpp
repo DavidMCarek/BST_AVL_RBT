@@ -15,6 +15,8 @@ AVL::~AVL()
 {
 }
 
+// inserts a node into the tree and then checks balance factors to decide if a rotation is needed
+// to maintain the balance of the tree
 void AVL::insert(std::string input)
 {
 	// If the root is null we only need to do a dumb insert and nothing else
@@ -125,11 +127,14 @@ void AVL::insert(std::string input)
 	}
 
 	// At this point we have thrown the tree out of balance by inserting
-	// the displacement tells us the first direction of the rotation 
+	// The displacement tells us the first direction of the rotation and the most recent non-zero balance factor node (b) 
+	// tells us the second direction
 	if (displacement == 1)
 	{
 		if (b->balanceFactor == 1) //LL
 		{
+			// set a's left child to b's right and b's right to a
+			// then fix balance factors
 			a->leftChild = b->rightChild;
 			b->rightChild = a;
 			nodePointerChanges += 2;
@@ -138,13 +143,25 @@ void AVL::insert(std::string input)
 		}
 		else //LR
 		{
+			// create a new node c that is b's right child
 			Node * c = b->rightChild;
+
+			// for this rotation the order of a, b, and c are b < c < a
+			// so c gets pulled up to the middle and sets its children to b (left) and a (right)
+			// this cuts off c's children though so prior to this c's left needs to be attached as b's right
+			// and c's right is attached as a's left
+
+			// then attach c's children to a and b
 			a->leftChild = c->rightChild;
 			b->rightChild = c->leftChild;
+
+			// then set c's children to b and a
 			c->leftChild = b;
 			c->rightChild = a;
 			nodePointerChanges += 4;
 
+			// then we set a and b's balance factors to 0 and correct one of them depending on what
+			// c's balance factor
 			a->balanceFactor = b->balanceFactor = 0;
 			balanceFactorChanges += 2;
 			
@@ -154,12 +171,13 @@ void AVL::insert(std::string input)
 				b->balanceFactor = 1;
 			balanceFactorChanges++;
 			
+			// then c's balance factor is fixed and set to 0
 			c->balanceFactor = 0;
 			balanceFactorChanges++;
-			b = c;
+			b = c; // this is for reattaching the subtree to the proper parent
 		}
 	}
-	else
+	else // again the next parts are symmetric so almost all the operations are just flipped
 	{
 		if (b->balanceFactor == -1) //RR
 		{
@@ -193,20 +211,26 @@ void AVL::insert(std::string input)
 			b = c;
 		}
 	}
+
+	// if the parent of the recent non zero balance factor node was null then there were no nodes with a nonzero balance
+	// or the only one was the root. in either case the recent non zero was the root so whatever is in position b needs to 
+	// be set as the root
 	if (f == nullptr)
 	{
 		Root = b;
 		return;
 	}
 		
-
+	// if the left child of the recent nonzero BF parent node is the recent nonzero node we need to attach the new
+	// root of the subtree (b) in a's place
 	if (f->leftChild == a)
 		f->leftChild = b;
-	else
+	else // otherwise its the right child that needs reattached
 		f->rightChild = b;
 	nodePointerChanges++;
 }
 
+// list all nodes in order with counts
 void AVL::list()
 {
 	// if the root is null then the set is empty and we need to output a blank line and return
@@ -238,6 +262,7 @@ void AVL::printNodeInfo(Node * node)
 	std::cout << node->value << " " << node->count << std::endl;
 }
 
+// clears previous stats and re-calculates them by recursively traversing
 void AVL::setStats()
 {
 	treeHeight = 0;
@@ -250,7 +275,7 @@ void AVL::setStats()
 	traverseSetStats(Root, treeHeight);
 }
 
-// recurse through the tree setting important statistics
+// recurse through the tree setting important statistics (RBT.cpp has a more detailed explanation of the same code)
 void AVL::traverseSetStats(Node* node, int nodeHeight)
 {
 	uniqueItemsInTree++;
@@ -268,11 +293,13 @@ void AVL::traverseSetStats(Node* node, int nodeHeight)
 		treeHeight = nodeHeight;
 }
 
+// sets the time it takes for the insert process
 void AVL::setInsertTime(std::chrono::duration<double> insertTime)
 {
 	totalInsertTime = insertTime;
 }
 
+// sets the statistics and then prints out the needed metrics
 void AVL::printStats()
 {
 	setStats();

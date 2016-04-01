@@ -22,7 +22,7 @@ Control::~Control()
 // insert the words read into any tree. It is used for metrics only and the functionality has
 // already been described. If you need more information or are confused on how this works please
 // refer to the bstInsert() function in main.cpp that goes over the function in more detail
-void Control::baseLineFileRead(char delimeters[11], std::string filePath)
+void Control::baseLineFileRead(char delimiters[11], std::string filePath)
 {
 	std::ifstream inputStream;
 	inputStream.open(filePath, std::ios::binary);
@@ -38,25 +38,25 @@ void Control::baseLineFileRead(char delimeters[11], std::string filePath)
 
 	std::string nextWord = "";
 
-	bool isDelimeter = false;
+	bool isDelimiter = false;
 	char nextChar;
 	inputStream.get(nextChar);
 
 	while (!inputStream.eof())
 	{
-		for each (char delimeter in delimeters)
+		for each (char delimiter in delimiters)
 		{
-			if (nextChar == delimeter)
+			if (nextChar == delimiter)
 			{
 				nextWord = "";
-				isDelimeter = true;
+				isDelimiter = true;
 			}
 		}
 
-		if (!isDelimeter)
+		if (!isDelimiter)
 			nextWord.push_back((unsigned char)nextChar);
 
-		isDelimeter = false;
+		isDelimiter = false;
 
 		inputStream.get(nextChar);
 	}

@@ -13,7 +13,7 @@ class Control
 public:
 	Control();
 	~Control();
-	void baseLineFileRead(char delimeters[11], std::string filePath);
+	void baseLineFileRead(char delimiters[11], std::string filePath);
 	std::chrono::duration<double> getFileReadTime();
 private:
 	std::chrono::duration<double> fileReadTime;

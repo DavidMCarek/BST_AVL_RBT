@@ -1,6 +1,10 @@
 // EECS 2510 : BST VS AVL VS RBT
 // David Carek
 
+// This class is a basic tree where nodes that are inserted are compared current nodes on the tree
+// if the value inserted is less than the value at the current node go to the left child else the right 
+// and repeat until a leaf is reached. this structure allows us to cut search time in half when accessing data
+
 #pragma once
 #include <string>
 #include <chrono>

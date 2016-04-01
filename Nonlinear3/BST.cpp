@@ -102,6 +102,7 @@ void BST::traverseAndPrint(Node* node)
 		traverseAndPrint(node->rightChild);
 }
 
+// clears previous stats and re-calculates them by recursively traversing
 void BST::setStats()
 {
 	treeHeight = 0;
@@ -129,11 +130,13 @@ void BST::traverseSetStats(Node* node, int nodeHeight)
 		treeHeight = nodeHeight;
 }
 
+// sets the time it takes for the insert process
 void BST::setInsertTime(std::chrono::duration<double> insertTime)
 {
 	totalInsertTime = insertTime;
 }
 
+// sets the statistics and then prints out the needed metrics
 void BST::printStats()
 {
 	setStats();

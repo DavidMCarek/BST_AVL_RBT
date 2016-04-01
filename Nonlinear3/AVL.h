@@ -1,6 +1,8 @@
 // EECS 2510 : BST VS AVL VS RBT
 // David Carek
 
+// This class is used to create a type of height balanced tree called an AVL tree
+// this tree uses balance factors to keep the trees height under 1.44lg(n)
 #pragma once
 #include <string>
 #include <chrono>
